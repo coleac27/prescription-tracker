@@ -8,7 +8,7 @@ const Medication= (props) => (
     {/* <td className="">
       {props.medication._id}
     </td> */}
-    <td className="" role="button" onClick={() => props.setIsModalOpen(true)}>
+    <td className="" role="button" onClick={() => props.openModal(props.medication._id)}>
       {props.medication.medicationName}
     </td>
     <td className="">
@@ -41,8 +41,8 @@ const Medication= (props) => (
           Delete
         </button>
           <MedlineModal 
-            isModalOpen={props.isModalOpen}
-            onClose={() => props.setIsModalOpen(false)}
+            isModalOpen={props.activeModalId === props.medication._id}
+            onClose={() => props.closeModal()}
             medicationName={props.medication.medicationName}
           />
       </div>
@@ -53,7 +53,7 @@ const Medication= (props) => (
 
 export default function Dashboard() {
   const [medications, setMedications] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeModalId, setActiveModalId] = useState(null);
 
   useEffect(() => {
     async function getMedications() {
@@ -81,6 +81,16 @@ export default function Dashboard() {
     setMedications(newMedications);
   }
 
+  // Open modal for a specific medication
+  const openModal = (id) => {
+    setActiveModalId(id);
+  };
+
+  // Close any open modal
+  const closeModal = () => {
+    setActiveModalId(null);
+  };
+
   // This method will map out the records on the table
   function medicationList() {
     //if(medications.length === 0)
@@ -88,8 +98,9 @@ export default function Dashboard() {
       return (
         <Medication
           medication={medication}
-          isModalOpen={isModalOpen} 
-          setIsModalOpen={setIsModalOpen}
+          activeModalId={activeModalId}
+          openModal={openModal}
+          closeModal={closeModal}
           deleteMedication={() => deleteMedication(medication._id)}
           key={medication._id}
         />
